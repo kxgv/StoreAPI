@@ -12,7 +12,7 @@ namespace StoreAPI.Infraestructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Guid",
+                name: "PublicId",
                 table: "Products");
         }
 
@@ -20,7 +20,7 @@ namespace StoreAPI.Infraestructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
-                name: "Guid",
+                name: "PublicId",
                 table: "Products",
                 type: "uniqueidentifier",
                 nullable: false,

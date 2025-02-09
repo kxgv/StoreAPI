@@ -12,7 +12,7 @@ using StoreAPI.Infraestructure.EntityFramework.Context;
 namespace StoreAPI.Infraestructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250209194012_UpdateProductGuid")]
+    [Migration("20250209194453_UpdateProductGuid")]
     partial class UpdateProductGuid
     {
         /// <inheritdoc />
@@ -40,15 +40,15 @@ namespace StoreAPI.Infraestructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
-
-                    b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Size")
                         .IsRequired()

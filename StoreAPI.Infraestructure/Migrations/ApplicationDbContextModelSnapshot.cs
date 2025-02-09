@@ -37,15 +37,15 @@ namespace StoreAPI.Infraestructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
-
-                    b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Size")
                         .IsRequired()
