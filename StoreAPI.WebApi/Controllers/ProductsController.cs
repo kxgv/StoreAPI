@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StoreAPI.Common.Dtos;
 using StoreAPI.Core.Interfaces;
+using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
 
 namespace StoreAPI.WebApi.Controllers
 {
@@ -11,7 +12,8 @@ namespace StoreAPI.WebApi.Controllers
         private readonly ILogger<ProductsController> _logger;
         private readonly IProductService _productService;
 
-        public ProductsController(ILogger<ProductsController> logger, IProductService productService) 
+        public ProductsController(
+            ILogger<ProductsController> logger, IProductService productService) 
         { 
             _logger = logger;
             _productService = productService;
@@ -38,17 +40,29 @@ namespace StoreAPI.WebApi.Controllers
                 return BadRequest(new {message = "Product Id is smaller than 0"});
             }
 
-            var existingProduct = await _productService.GetProductById(productId);
+            //var existingProduct = await _productService.GetProductById(productId);
 
-            if(existingProduct != null)
-            {
-                return Conflict(new {message = $"Product with Id {productId} already exists"});
-            }
+            //if(existingProduct != null)
+            //{
+            //    return Conflict(new {message = $"Product with Id {productId} already exists"});
+            //}
 
             try
             {
-                var newProduct = await _productService.Post(productId, model);
-                return Ok(newProduct);
+
+                var testProduct = new ProductDto
+                {
+                    Id = 0, // Si es autogenerado en la BD, se ignora
+                    Guid = Guid.NewGuid(), // Genera un GUID único
+                    Name = "Producto de Prueba",
+                    Color = "Rojo",
+                    Price = 19.99,
+                    Size = "M",
+                    Description = "Este es un producto de prueba para la base de datos."
+                };
+
+                var newProduct = await _productService.Post(0, testProduct);
+                return Ok($"New product creataed with Id {newProduct.Id}");
             }
             catch (Exception ex) {
                 _logger.LogError(ex.Message, new { message = $"Error creating product {productId}" });
