@@ -13,7 +13,7 @@ namespace StoreAPI.WebApi.Configuration.Mappers
 
             CreateMap<ProductDto, Product>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignoramos el Id si es autogenerado por la BD
-                .ForMember(dest => dest.PublicId, opt => opt.MapFrom(src => src.Guid != Guid.Empty ? src.Guid : Guid.NewGuid()));
+                .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid != Guid.Empty ? src.Guid : Guid.NewGuid()));
 
             CreateMap<ProductDto, Product>();
             CreateMap<Product, ProductDto>();
