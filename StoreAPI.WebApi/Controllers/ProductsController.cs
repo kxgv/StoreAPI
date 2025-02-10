@@ -3,20 +3,28 @@ using StoreAPI.Common.Dtos;
 using StoreAPI.Core.Interfaces;
 using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
 
-namespace StoreAPI.WebApi.Controllers
-{
-    [ApiController]
-    [Route("[controller]")]
-    public class ProductsController : ControllerBase
+    namespace StoreAPI.WebApi.Controllers
     {
-        private readonly ILogger<ProductsController> _logger;
-        private readonly IProductService _productService;
+        [ApiController]
+        [Route("[controller]")]
+        public class ProductsController : ControllerBase
+        {
+            private readonly ILogger<ProductsController> _logger;
+            private readonly IProductService _productService;
 
-        public ProductsController(
-            ILogger<ProductsController> logger, IProductService productService) 
-        { 
-            _logger = logger;
-            _productService = productService;
+            public ProductsController(
+                ILogger<ProductsController> logger, IProductService productService) 
+            { 
+                _logger = logger;
+                _productService = productService;
+            }
+
+        //api/featured
+        [HttpGet("featured")]
+        public async Task<IActionResult> GetFeaturedProducts()
+        {
+            var featuredProducts = await _productService.GetFeaturedProductsAsync();
+            return Ok(featuredProducts);
         }
 
         // api/products

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StoreAPI.Common.Dtos;
 using StoreAPI.Infraestructure.EntityFramework.Context;
 using StoreAPI.Infraestructure.EntityFramework.Daos;
 using StoreAPI.Infraestructure.Interfaces;
@@ -10,6 +11,11 @@ namespace StoreAPI.Infraestructure.Repositores
     {
         public ProductRepository(ApplicationDbContext context) : base(context)
         {
+        }
+
+        public async Task<IEnumerable<Product>> GetAllFeaturedAsync()
+        {
+            return await _context.Products.Where(p => p.IsFeatured == true).ToListAsync();
         }
 
         public async Task<PagedResponseKeyset<Product>> GetWithKeysetPagination(int reference, int pageSize)

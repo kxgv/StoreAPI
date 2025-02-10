@@ -28,6 +28,12 @@ namespace StoreAPI.Core.Services
             _logger = logger;
         }
 
+        public async Task<IEnumerable<ProductDto>> GetFeaturedProductsAsync()
+        {
+            var featuredProducts = await _productRepository.GetAllFeaturedAsync();
+            return _mapper.Map<IEnumerable<ProductDto>>(featuredProducts);
+        }
+
         public async Task<PagedResponseKeyset<ProductResultDto>> GetWithKeysetPagination(int reference, int pageSize)
         {
             var pagedProducts = await _productRepository.GetWithKeysetPagination(reference, pageSize);
