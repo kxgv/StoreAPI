@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StoreAPI.Common.Dtos
 {
-    public class ProductDto
+    public class ProductDetailDto
     {
         public int Id { get; set; } // ID interno (BIGINT Identity)
         public Guid Guid { get; set; } // ID único para integración externa (GUID)

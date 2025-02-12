@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Resolve dependencies injection
 builder.Services.AddInfrastructure(builder.Configuration);  
 
-// Add services to the container.
+// Add services to the container. 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
 {

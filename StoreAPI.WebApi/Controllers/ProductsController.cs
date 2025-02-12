@@ -27,6 +27,18 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             return Ok(featuredProducts);
         }
 
+        // /product-detail/:Id
+        [HttpGet("product-detail/{productId}")]
+        public async Task<IActionResult> GetProductDetail(int productId)
+        {
+            var detailedProduct = await _productService.GetProductDetailAsync(productId);
+            if(detailedProduct == null)
+            {
+                return NotFound($" Product with Id {productId} not found.");
+            }
+            return Ok(detailedProduct);
+        }   
+
         // api/products
         [HttpGet("GetWithKeysetPagination")]
         public async Task<IActionResult> GetWithKeysetPagination(int reference = 0, int pageSize = 10)

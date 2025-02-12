@@ -7,5 +7,6 @@ namespace StoreAPI.Infraestructure.Interfaces
         Task<PagedResponseKeyset<Product>> GetWithKeysetPagination(int reference, int pageSize);
         Task<Product> GetByNameAsync(string name);
         Task<IEnumerable<Product>> GetAllFeaturedAsync();
+        Task<Product> GetProduct(int productId);
     }
 }

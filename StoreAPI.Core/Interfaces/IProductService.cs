@@ -9,6 +9,7 @@ namespace StoreAPI.Core.Interfaces
         //Task<ProductDto> GetDto(int id);
         //Task<Product> GetProductById(int id);
         Task<ProductDto> Post(int productId, ProductDto model);
-        Task<IEnumerable<ProductDto>> GetFeaturedProductsAsync();
+        Task<IEnumerable<ProductHomeDto>> GetFeaturedProductsAsync();
+        Task<ProductDetailDto> GetProductDetailAsync(int productId);
     }
 }

@@ -18,6 +18,15 @@ namespace StoreAPI.Infraestructure.Repositores
             return await _context.Products.Where(p => p.IsFeatured == true).ToListAsync();
         }
 
+        public async Task<Product> GetProduct(int productId)
+        {
+            var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == productId);
+            if (product == null)
+            {
+                throw new ArgumentNullException("ProductId is null");            }
+            return product;
+        }
+
         public async Task<PagedResponseKeyset<Product>> GetWithKeysetPagination(int reference, int pageSize)
         {
             var products = await _context.Products.AsNoTracking()
