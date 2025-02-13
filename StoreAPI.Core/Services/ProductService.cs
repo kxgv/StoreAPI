@@ -34,10 +34,31 @@ namespace StoreAPI.Core.Services
             return _mapper.Map<IEnumerable<ProductHomeDto>>(featuredProducts);
         }
 
+        public async Task<Product> GetProductAsync(int productId)
+        {
+            var existentProduct = await _productRepository.GetProduct(productId);
+            return existentProduct;
+        }
+
+        public async Task DeleteProductAsync(int productId) {
+            var productToDelete = await _productRepository.GetByIdAsync(productId);
+            if(productToDelete != null)
+            {
+                _productRepository.Delete(productToDelete);
+                await _unitOfWork.SaveChangesAsync();
+            }
+        }
+
         public async Task<ProductDetailDto> GetProductDetailAsync(int id)
         {
             var product = await _productRepository.GetProduct(id); 
             return _mapper.Map<ProductDetailDto>(product);
+        }
+
+        public async Task<IEnumerable<ProductHomeDto>> GetAllProductsAsync()
+        {
+            var products = await _productRepository.GetAllAsync();
+            return _mapper.Map < IEnumerable<ProductHomeDto>>(products);
         }
 
         public async Task<PagedResponseKeyset<ProductResultDto>> GetWithKeysetPagination(int reference, int pageSize)

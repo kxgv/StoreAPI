@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using StoreAPI.Core.Interfaces;
 
 namespace StoreAPI.WebApi.Controllers
 {
@@ -8,18 +7,22 @@ namespace StoreAPI.WebApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly ILogger<ProductsController> _logger;
+        private readonly IAuthService _authService;
 
-        public AuthController(AuthService authService)
+        public AuthController(
+            ILogger<ProductsController> logger,
+            IAuthService authService)
         {
+            _logger = logger;
             _authService = authService; 
         }
 
         // POST: api/login
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var token = _authService.Authenticate(request.Username, request.Password);
+            var token = await _authService.AuthenticateAsync(request.Email, request.Password);
             if (token == null)
                 return Unauthorized(new { message = "Credenciales incorrectas" });
 
@@ -29,7 +32,7 @@ namespace StoreAPI.WebApi.Controllers
 
     public class LoginRequest
     {
-        public string Username { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }

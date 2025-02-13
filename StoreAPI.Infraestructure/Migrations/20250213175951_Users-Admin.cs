@@ -36,13 +36,12 @@ namespace StoreAPI.Infraestructure.Migrations
                 (Username, PasswordHash, Email, Role, LastLogin)
             VALUES
                 (
-                'admin', 
+                'admin-kx', 
                 '{passwordHash}', 
                 'admin@kx.com', 
                 'Admin', 
                 GETUTCDATE())"
             );
-
         }
 
         /// <inheritdoc />
@@ -52,4 +51,4 @@ namespace StoreAPI.Infraestructure.Migrations
                 name: "Users");
         }
     }
-}
+}   

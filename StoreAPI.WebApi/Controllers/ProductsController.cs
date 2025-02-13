@@ -38,6 +38,18 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             }
             return Ok(detailedProduct);
         }
+        // api/product-detail/:Id
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var allProducts = await _productService.GetAllProductsAsync();
+            if (allProducts == null)
+            {
+                return NotFound("No products has been found.");
+
+            } 
+            return Ok(allProducts);
+        }
 
         // api/GetWithKeysetPagination
         [HttpGet("GetWithKeysetPagination")]
@@ -49,6 +61,28 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             var pagedProductsDto = await _productService.GetWithKeysetPagination(reference, pageSize);
 
             return Ok(pagedProductsDto);
+        }
+
+        [HttpDelete("productI")]
+        public async Task<IActionResult> Delete(int productId) 
+        { 
+            if(productId <= 0 || productId == null) { return BadRequest("Product Id is smaller than 0 or null"); }
+
+            var existentProduct = await _productService.GetProductAsync(productId);
+            if (existentProduct == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                await _productService.DeleteProductAsync(productId);
+                return Ok("product deleted");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // api/products/delete/{productId}

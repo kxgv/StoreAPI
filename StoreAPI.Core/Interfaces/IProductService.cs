@@ -11,5 +11,8 @@ namespace StoreAPI.Core.Interfaces
         Task<ProductDto> Post(int productId, ProductDto model);
         Task<IEnumerable<ProductHomeDto>> GetFeaturedProductsAsync();
         Task<ProductDetailDto> GetProductDetailAsync(int productId);
+        Task<IEnumerable<ProductHomeDto>> GetAllProductsAsync();
+        Task<Product> GetProductAsync(int productId);
+        Task DeleteProductAsync(int productId); 
     }
 }

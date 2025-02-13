@@ -5,8 +5,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
+using StoreAPI.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using StoreAPI.Infraestructure.EntityFramework.Daos;
 
-public class AuthService
+public class AuthService : IAuthService
 {
     private readonly IConfiguration _config;
     private readonly ApplicationDbContext _context;
@@ -17,37 +20,14 @@ public class AuthService
         _context = context;
     }
 
-    public string Authenticate(string username, string password)
+    public async Task<string> AuthenticateAsync(string email, string password)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Username == username);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
         if (user == null || !VerifyPassword(password, user.PasswordHash))
             return null;
 
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role),
-            new Claim("LastLogin", DateTime.UtcNow.ToString("o"))
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_config["Jwt:ExpireMinutes"])),
-            signingCredentials: creds
-        );
-
-        user.LastLogin = DateTime.UtcNow;
-        _context.SaveChanges();
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return GenerateJwtToken(user);
     }
 
     private bool VerifyPassword(string password, string storedHash)
@@ -60,5 +40,23 @@ public class AuthService
         {
             return false;
         }
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
+            }),
+            Expires = DateTime.UtcNow.AddHours(1),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 }

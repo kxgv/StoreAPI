@@ -27,7 +27,7 @@ namespace StoreAPI.WebApi.Configurations
 
             // Services
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<AuthService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }
