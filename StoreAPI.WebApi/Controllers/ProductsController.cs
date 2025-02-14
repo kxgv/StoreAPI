@@ -19,7 +19,7 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
                 _productService = productService;
             }
 
-        //api/featured
+        // api/featured
         [HttpGet("featured")]
         public async Task<IActionResult> GetFeaturedProducts()
         {
@@ -27,7 +27,7 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             return Ok(featuredProducts);
         }
 
-        // api/product-detail/:Id
+        // api/product-detail/:productId
         [HttpGet("product-detail/{productId}")]
         public async Task<IActionResult> GetProductDetail(int productId)
         {
@@ -38,6 +38,7 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             }
             return Ok(detailedProduct);
         }
+
         // api/product-detail/:Id
         [HttpGet("all")]
         public async Task<IActionResult> GetAllProducts()
@@ -63,10 +64,11 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             return Ok(pagedProductsDto);
         }
 
-        [HttpDelete("productI")]
+        // api/delete/:productId
+        [HttpDelete("delete/{productId}")]
         public async Task<IActionResult> Delete(int productId) 
         { 
-            if(productId <= 0 || productId == null) { return BadRequest("Product Id is smaller than 0 or null"); }
+            if(productId <= 0) { return BadRequest("Product Id is smaller than 0 or null"); }
 
             var existentProduct = await _productService.GetProductAsync(productId);
             if (existentProduct == null)
@@ -77,7 +79,7 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             try
             {
                 await _productService.DeleteProductAsync(productId);
-                return Ok("product deleted");
+                return Ok(new { message = "Product deleted" });
             }
             catch (Exception ex)
             {
@@ -85,42 +87,25 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             }
         }
 
-        // api/products/delete/{productId}
-        [HttpPost("productId")]
-        public async Task<IActionResult> Post(int productId, ProductDto model)
+        // api/post/
+        [HttpPost]
+        public async Task<IActionResult> Post(CreateProductDto model)
         {
-            if(productId <= 0)
-            {
-                return BadRequest(new {message = "Product Id is smaller than 0"});
-            }
-
-            //var existingProduct = await _productService.GetProductById(productId);
-
-            //if(existingProduct != null)
-            //{
-            //    return Conflict(new {message = $"Product with Id {productId} already exists"});
-            //}
-
             try
             {
+                var newProduct = await _productService.Post(model);
 
-                var testProduct = new ProductDto
+                if (newProduct != null)
                 {
-                    Id = 0, // Si es autogenerado en la BD, se ignora
-                    Guid = Guid.NewGuid(), // Genera un GUID único
-                    Name = "Producto de Prueba",
-                    Color = "Rojo",
-                    Price = 19.99,
-                    Size = "M",
-                    Description = "Este es un producto de prueba para la base de datos."
-                };
+                    return Ok(new { message = $"New product created", product = newProduct });
+                }
 
-                var newProduct = await _productService.Post(0, testProduct);
-                return Ok($"New product creataed with Id {newProduct.Id}");
+                return BadRequest(new { message = "Failed to create product" });
             }
-            catch (Exception ex) {
-                _logger.LogError(ex.Message, new { message = $"Error creating product {productId}" });
-                return StatusCode(500, new {message = "Unexpected expection creating product" });
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred while creating product: {ex.Message}");
+                return StatusCode(500, new { message = "Unexpected exception creating product", error = ex.Message });
             }
         }
 

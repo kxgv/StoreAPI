@@ -67,35 +67,23 @@ namespace StoreAPI.Core.Services
             return _mapper.Map<PagedResponseKeyset<ProductResultDto>>(pagedProducts);
         }
 
-        //public async Task<ProductDto> GetDto(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public async Task<Product> GetProductById(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        public async Task<ProductDto> Post(int productId, ProductDto model)
+        public async Task<CreateProductDto> Post(CreateProductDto model)
         {
             try
             {
-                model.Guid = Guid.NewGuid();
-                model.Guid = model.Guid == Guid.Empty ? Guid.NewGuid() : model.Guid;
-
-                // new Product base on model
                 var newProduct = _mapper.Map<Product>(model);
+                newProduct.Guid = Guid.NewGuid(); // Genera el GUID
 
                 await _productRepository.AddAsync(newProduct);
+
                 await _unitOfWork.SaveChangesAsync();
 
-                return _mapper.Map<ProductDto>(newProduct);
-            } 
+                return _mapper.Map<CreateProductDto>(newProduct);
+            }
             catch (Exception e)
             {
-                _logger.LogError("Error posting product");
-                throw new Exception(e.Message, e);
+                _logger.LogError("Error posting product: " + e.Message);
+                throw new Exception("Error while posting product", e);
             }
         }
     }

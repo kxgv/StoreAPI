@@ -18,6 +18,9 @@ namespace StoreAPI.WebApi.Configuration.Mappers
             CreateMap<ProductDto, Product>();
             CreateMap<Product, ProductDto>();
 
+            CreateMap<CreateProductDto, Product>();
+            CreateMap<Product, CreateProductDto>();
+
             CreateMap<Product, ProductHomeDto>();
             CreateMap<ProductHomeDto, Product>();
 
