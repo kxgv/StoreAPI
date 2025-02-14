@@ -42,6 +42,26 @@ namespace StoreAPI.Infraestructure.Migrations
                 'Admin', 
                 GETUTCDATE())"
             );
+
+            migrationBuilder.Sql($@"
+                INSERT INTO Products (Name, Guid, Color, Price, Size, [Description], IsFeatured, ImageURL)
+                VALUES('Producto de Prueba 5', NEWID(), 'Amarillo', 20.22, 'M', 'Este es un producto de prueba para la base de datos.', 1, 'https://i.postimg.cc/DZ7zcb1K/ropa-3.jpg');
+
+                INSERT INTO Products (Name, Guid, Color, Price, Size, [Description], IsFeatured, ImageURL)
+                VALUES('Producto de Prueba 6', NEWID(), 'Amarillo', 20.22, 'M', 'Este es un producto de prueba para la base de datos.', 1, 'https://i.postimg.cc/QxzHrCZp/ropa-9.jpg');
+
+                INSERT INTO Products (Name, Guid, Color, Price, Size, [Description], IsFeatured, ImageURL)
+                VALUES('Producto de Prueba 7', NEWID(), 'Amarillo', 20.22, 'M', 'Este es un producto de prueba para la base de datos.', 1, 'https://i.postimg.cc/YS69gxG3/ropa-5.jpg');
+
+                INSERT INTO Products (Name, Guid, Color, Price, Size, [Description], IsFeatured, ImageURL)
+                VALUES('Producto de Prueba 8', NEWID(), 'Amarillo', 20.22, 'M', 'Este es un producto de prueba para la base de datos.', 1, 'https://i.postimg.cc/WzWtzbFc/ropa-8.jpg');
+
+                INSERT INTO Products (Name, Guid, Color, Price, Size, [Description], IsFeatured, ImageURL)
+                VALUES('Producto de Prueba 9', NEWID(), 'Amarillo', 20.22, 'M', 'Este es un producto de prueba para la base de datos.', 1, 'https://i.postimg.cc/WzWtzbFc/ropa-8.jpg');
+
+                INSERT INTO Products (Name, Guid, Color, Price, Size, [Description], IsFeatured, ImageURL)
+                VALUES('Producto de Prueba 10', NEWID(), 'Amarillo', 20.22, 'M', 'Este es un producto de prueba para la base de datos.', 1, 'https://i.postimg.cc/YS69gxG3/ropa-5.jpg');
+            ");
         }
 
         /// <inheritdoc />
