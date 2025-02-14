@@ -21,6 +21,12 @@ API en -> "http://localhost:5018",
 
 Se ha deshabilitado el SSL y HTTPS ya que Angular da problemas.
 
+## Base de datos
+
+server localhost\SQLEXPRESS
+databaseName: DEV
+connectionString: "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=DEV;TrustServerCertificate=True;Integrated Security=True;"
+
 ## Migrations
 
 Para aplicar las migraciones
