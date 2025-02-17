@@ -42,11 +42,12 @@ namespace StoreAPI.Core.Services
 
         public async Task DeleteProductAsync(int productId) {
             var productToDelete = await _productRepository.GetByIdAsync(productId);
-            if(productToDelete != null)
+            if (productToDelete is null)
             {
-                _productRepository.Delete(productToDelete);
-                await _unitOfWork.SaveChangesAsync();
+                throw new NullReferenceException("Product to delete not found");
             }
+            _productRepository.Delete(productToDelete);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<ProductDetailDto> GetProductDetailAsync(int id)
@@ -86,5 +87,20 @@ namespace StoreAPI.Core.Services
                 throw new Exception("Error while posting product", e);
             }
         }
+
+        public async Task<CreateProductDto> Put(int productId, CreateProductDto model)
+        {
+            var existingProduct = await _productRepository.GetByIdAsync(productId);
+
+            if (existingProduct is null)
+            {
+                throw new Exception("Product not found");
+            }
+
+            _mapper.Map(model, existingProduct);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<CreateProductDto>(existingProduct);
+        }
+
     }
 }

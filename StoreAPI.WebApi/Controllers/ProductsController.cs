@@ -19,40 +19,50 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
                 _productService = productService;
             }
 
-        // api/featured
+        // /featured
         [HttpGet("featured")]
         public async Task<IActionResult> GetFeaturedProducts()
         {
+            _logger.LogDebug("{MethodName}", nameof(GetFeaturedProducts));
             var featuredProducts = await _productService.GetFeaturedProductsAsync();
             return Ok(featuredProducts);
         }
 
-        // api/product-detail/:productId
+        // /product-detail/:productId
         [HttpGet("product-detail/{productId}")]
         public async Task<IActionResult> GetProductDetail(int productId)
         {
-            var detailedProduct = await _productService.GetProductDetailAsync(productId);
-            if(detailedProduct == null)
+            _logger.LogDebug("{MethodName}", nameof(GetProductDetail));
+            if (productId <= 0)
             {
-                return NotFound($" Product with Id {productId} not found.");
+                return BadRequest("Product Id is invalid");
             }
+            var detailedProduct = await _productService.GetProductDetailAsync(productId);
+            return Ok(detailedProduct);
+        }
+        
+        // /product-edit/:productId
+        [HttpGet("product-edit/{productId}")]
+        public async Task<IActionResult> GetProduct(int productId)
+        {
+            _logger.LogDebug("{MethodName}", nameof(GetProduct));
+            if (productId <= 0)
+            {
+                return BadRequest("Product Id is invalid");
+            }
+            var detailedProduct = await _productService.GetProductDetailAsync(productId);
             return Ok(detailedProduct);
         }
 
-        // api/product-detail/:Id
+        // /product-detail/:Id
         [HttpGet("all")]
         public async Task<IActionResult> GetAllProducts()
         {
             var allProducts = await _productService.GetAllProductsAsync();
-            if (allProducts == null)
-            {
-                return NotFound("No products has been found.");
-
-            } 
             return Ok(allProducts);
         }
 
-        // api/GetWithKeysetPagination
+        // /GetWithKeysetPagination
         [HttpGet("GetWithKeysetPagination")]
         public async Task<IActionResult> GetWithKeysetPagination(int reference = 0, int pageSize = 10)
         {
@@ -64,18 +74,13 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             return Ok(pagedProductsDto);
         }
 
-        // api/delete/:productId
+        // /delete/:productId
         [HttpDelete("delete/{productId}")]
         public async Task<IActionResult> Delete(int productId) 
         { 
+            _logger.LogDebug("{MethodName}", nameof(Delete));
             if(productId <= 0) { return BadRequest("Product Id is smaller than 0 or null"); }
-
-            var existentProduct = await _productService.GetProductAsync(productId);
-            if (existentProduct == null)
-            {
-                return NotFound();
-            }
-
+            
             try
             {
                 await _productService.DeleteProductAsync(productId);
@@ -86,21 +91,15 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
                 return StatusCode(500, ex.Message);
             }
         }
-
-        // api/post/
+        
         [HttpPost]
         public async Task<IActionResult> Post(CreateProductDto model)
         {
             try
             {
+                _logger.LogDebug("{MethodName}", nameof(Post));
                 var newProduct = await _productService.Post(model);
-
-                if (newProduct != null)
-                {
-                    return Ok(new { message = $"New product created", product = newProduct });
-                }
-
-                return BadRequest(new { message = "Failed to create product" });
+                return Ok(new { message = $"New product created", product = newProduct });
             }
             catch (Exception ex)
             {
@@ -108,6 +107,22 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
                 return StatusCode(500, new { message = "Unexpected exception creating product", error = ex.Message });
             }
         }
-
+        
+        // /update/{productId}
+        [HttpPut("update/{productId}")]
+        public async Task<IActionResult> Put(int productId, CreateProductDto model)
+        {
+            try
+            {
+                _logger.LogDebug("{MethodName}", nameof(Put));
+                var updatedProduct = await _productService.Put(productId, model);
+                return Ok(new { message = $"Product with ID {productId} updated", product = updatedProduct });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred while updating product ID {productId}: {ex.Message}");
+                return StatusCode(500, new { message = "Unexpected error updating product", error = ex.Message });
+            }
+        }
     }
 }   
