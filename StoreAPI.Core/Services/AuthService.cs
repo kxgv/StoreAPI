@@ -20,15 +20,15 @@ public class AuthService : IAuthService
         _context = context;
     }
 
-    public async Task<string> AuthenticateAsync(string email, string password)
-    {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+    //public async Task<string> AuthenticateAsync(string email, string password)
+    //{
+    //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
-        if (user == null || !VerifyPassword(password, user.PasswordHash))
-            return null;
+    //    if (user == null || !VerifyPassword(password, user.PasswordHash))
+    //        return null;
 
-        return GenerateJwtToken(user);
-    }
+    //    return GenerateJwtToken(user);
+    //}
 
     private bool VerifyPassword(string password, string storedHash)
     {

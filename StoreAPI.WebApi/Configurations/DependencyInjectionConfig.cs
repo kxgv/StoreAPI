@@ -6,6 +6,8 @@ using StoreAPI.Infraestructure.Interfaces;
 using StoreAPI.Infraestructure.Repositores;
 using AutoMapper;
 using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
+using static StoreAPI.Infraestructure.EntityFramework.Context.ApplicationDbContext;
 
 namespace StoreAPI.WebApi.Configurations
 {
@@ -20,6 +22,11 @@ namespace StoreAPI.WebApi.Configurations
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            // Configurar Identity
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             // Repositories and UnitOfWork
             services.AddScoped<IUnitOfWork, UnitOfWork>();
