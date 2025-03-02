@@ -22,7 +22,7 @@ namespace StoreAPI.Infraestructure.EntityFramework.Context
 
         public class ApplicationUser : IdentityUser
         {
-            // properties
+            public bool IsAdmin { get; set; } // Add this property
         }
 
     }

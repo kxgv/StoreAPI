@@ -24,9 +24,12 @@ namespace StoreAPI.WebApi.Configurations
                 options.UseSqlServer(connectionString));
 
             // Configurar Identity
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true; // Asegura que los emails sean únicos
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             // Repositories and UnitOfWork
             services.AddScoped<IUnitOfWork, UnitOfWork>();

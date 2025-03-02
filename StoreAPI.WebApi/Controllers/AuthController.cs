@@ -38,7 +38,7 @@ namespace StoreAPI.WebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email, IsAdmin = model.IsAdmin};
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
@@ -51,24 +51,46 @@ namespace StoreAPI.WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
+            _logger.LogDebug("{MethodName}", nameof(Login));
+            if (model == null)
+            {
+                return BadRequest("El modelo de solicitud no puede ser nulo.");
+            }
+
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null) return Unauthorized("Credenciales inválidas");
+            if (user == null) return Unauthorized("User not found");
 
             var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
-            if (!result.Succeeded) return Unauthorized("Credenciales inválidas");
+            if (!result.Succeeded) return Unauthorized("Wrong password");
 
-            var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            try
+            {
+                var token = GenerateJwtToken(user);
+                return Ok(new { token });
+            }
+            catch (Exception ex) { 
+                return BadRequest(ex.Message);
+            }
         }
 
         private string GenerateJwtToken(ApplicationUser user)
         {
+            _logger.LogDebug("{MethodName}", nameof(GenerateJwtToken));
+            if (string.IsNullOrEmpty(user.Email))
+            {
+                throw new ArgumentException("Email is null");
+            }
+            if (string.IsNullOrEmpty(_configuration["Jwt:Key"]))
+            {
+                throw new NullReferenceException("No JWT key, revise Config");
+            }
+
             byte[] key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            }; 
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim("IsAdmin", user.IsAdmin.ToString()) // Add IsAdmin claim
+                };
 
             var token = new JwtSecurityToken(
                 claims: claims,
@@ -79,16 +101,17 @@ namespace StoreAPI.WebApi.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
+}
 
     public class LoginRequest
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public required string Email { get; set; }
+        public required string Password { get; set; }
     }
 
     public class RegisterModel
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public required string Email { get; set; }
+        public required string Password { get; set; }
+        public bool IsAdmin {  get; set; }
     }
-}
