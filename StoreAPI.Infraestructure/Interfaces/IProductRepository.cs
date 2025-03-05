@@ -8,5 +8,6 @@ namespace StoreAPI.Infraestructure.Interfaces
         Task<Product> GetByNameAsync(string name);
         Task<IEnumerable<Product>> GetAllFeaturedAsync();
         Task<Product> GetProduct(int productId);
+        Task<PagedList<Product>> GetAllPagedProducts(int skip, int take);
     }
 }

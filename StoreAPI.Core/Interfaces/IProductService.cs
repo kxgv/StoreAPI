@@ -13,5 +13,6 @@ namespace StoreAPI.Core.Interfaces
         Task DeleteProductAsync(int productId);
         Task<CreateProductDto> Post(CreateProductDto model);
         Task<CreateProductDto>Put(int productId, CreateProductDto model);
+        Task<PagedList<Product>> GetPagedProducts(int? page);
     }
 }

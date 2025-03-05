@@ -52,5 +52,20 @@ namespace StoreAPI.Infraestructure.Repositores
 
             return product;
         }
+
+        public async Task<PagedList<Product>> GetAllPagedProducts (int skip, int take)
+        {
+            var products = await _context.Products.Skip(skip).Take(take).ToListAsync();
+            var productsCount = products.Count;
+
+            var pagedList = new PagedList<Product>()
+            {
+                Entities = products,
+                HasNext = (skip + 10 < productsCount),
+                HasPrevious = (skip > 0)
+            };
+
+            return pagedList;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StoreAPI.Common.Dtos;
 using StoreAPI.Core.Interfaces;
+using StoreAPI.Infraestructure.EntityFramework.Daos;
 using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
 
     namespace StoreAPI.WebApi.Controllers
@@ -121,6 +122,23 @@ using StoreAPI.Infraestructure.EntityFramework.UnitOfWork;
             catch (Exception ex)
             {
                 _logger.LogError($"Error occurred while updating product ID {productId}: {ex.Message}");
+                return StatusCode(500, new { message = "Unexpected error updating product", error = ex.Message });
+            }
+        }
+
+        // /getPagedProducts
+        [HttpGet("getPagedProducts")]
+        public async Task<IActionResult> GetPagedProducts(int? pageNumber)
+        {
+            try
+            {
+                _logger.LogDebug("{MethodName}", nameof(GetPagedProducts));
+                var pagedProducts = await _productService.GetPagedProducts(pageNumber);
+                return Ok(new { message = "Get paged products", products = pagedProducts });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred getting paged products");
                 return StatusCode(500, new { message = "Unexpected error updating product", error = ex.Message });
             }
         }

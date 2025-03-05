@@ -59,7 +59,7 @@ namespace StoreAPI.Core.Services
         public async Task<IEnumerable<ProductHomeDto>> GetAllProductsAsync()
         {
             var products = await _productRepository.GetAllAsync();
-            return _mapper.Map < IEnumerable<ProductHomeDto>>(products);
+            return _mapper.Map <IEnumerable<ProductHomeDto>>(products);
         }
 
         public async Task<PagedResponseKeyset<ProductResultDto>> GetWithKeysetPagination(int reference, int pageSize)
@@ -102,5 +102,15 @@ namespace StoreAPI.Core.Services
             return _mapper.Map<CreateProductDto>(existingProduct);
         }
 
+        public async Task<PagedList<Product>> GetPagedProducts(int? pageNumber)
+        {
+            const int pageSize = 10;
+            int currentPage = pageNumber ?? 0;
+
+            var pagedProducts = await _productRepository.GetAllPagedProducts(currentPage * pageSize, pageSize);
+
+            return pagedProducts;
+
+        }
     }
 }
